@@ -2,7 +2,8 @@ import Joi from 'joi';
 import express from 'express';
 const app = express();
 
-app.use(express.json()); // Middleware to parse JSON bodies
+// Middleware to parse JSON bodies
+app.use(express.json()); 
 
 const books = [
     {
@@ -19,7 +20,8 @@ const books = [
         id: 3,
         author: "Author 3",
         title: "Titulinis 3"
-    }]
+    },
+];
 
 // CRUD
 // Create - app.post()
@@ -37,7 +39,7 @@ app.get('/demo', (req, res) => {
 
 app.get('/demo/:id', (req, res) => {
     const id = req.params.id;
-    res.send([id, cat]);
+    res.send([id]);
 });
 
 app.get('/demo/:cat/:id', (req, res) => {
@@ -51,6 +53,8 @@ app.get('/query', (req, res) => {
     const q = req.query;
     res.send(q);
 });
+
+//---------------APP-----------
 
 // GETS
 app.get('/api/books', (req,res) => {
@@ -82,8 +86,8 @@ app.post('/api/books', (req, res) => {
     const naujaKnyga = {
         id: books.length + 1,
         author: req.body.author,
-        title: req.body.title
-    }
+        title: req.body.title,
+    };
     books.push(naujaKnyga);
     res.send(books);
 });*/
@@ -91,7 +95,7 @@ app.post('/api/books', (req, res) => {
 app.post('/api/books', (req, res) => {
     const schema = Joi.object({
         author: Joi.string().min(5).required(),
-        title: Joi.string().min(1).required()
+        title: Joi.string().min(1).required(),
     });
 
     const validation = schema.validate(req.body);
@@ -103,20 +107,20 @@ app.post('/api/books', (req, res) => {
     const naujaKnyga = {
         id: books.length + 1,
         author: req.body.author,
-        title: req.body.title
+        title: req.body.title,
     }
     books.push(naujaKnyga);
     res.send(books);
 });
 
 // PUT / UPDATE
-app.post('/api/books/:id', (req, res) => {
-    const book = books.find(book => book.id === parseInt(req.params.id));
+app.put('/api/books/:id', (req, res) => {
+    const book = books.find((book) => book.id === parseInt(req.params.id));
     if (!book) return res.status(404).send("Book not found ☹️");
 
     const schema = Joi.object({
         author: Joi.string().min(5).required(),
-        title: Joi.string().min(1).required()
+        title: Joi.string().min(1).required(),
     });
 
     const validation = schema.validate(req.body);
@@ -125,8 +129,8 @@ app.post('/api/books/:id', (req, res) => {
         res.status(400).send(validation.error.details[0].message);
         return;
     }
-    book.author = req.body.author,
-    book.title = req.body.title
+    book.author = req.body.author;
+    book.title = req.body.title;
     res.send(books);
 });
 
