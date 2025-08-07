@@ -1,3 +1,4 @@
+import { getBooks, getBook } from "./app_db.js";
 import Joi from 'joi';
 import express from 'express';
 const app = express();
@@ -37,6 +38,7 @@ app.get('/demo', (req, res) => {
     res.send(['a', 'b', 'c'])
 });
 
+// Params
 app.get('/demo/:id', (req, res) => {
     const id = req.params.id;
     res.send([id]);
@@ -57,14 +59,25 @@ app.get('/query', (req, res) => {
 //---------------APP-----------
 
 // GETS
-app.get('/api/books', (req,res) => {
+// app.get("/api/books", (req, res) => {
+//   res.send(books);
+// });
+
+app.get('/api/books', async (req,res) => {
+    const books = await getBooks();
     res.send(books)
 });
 
-app.get('/api/books/:id', (req,res) => {
+/*app.get('/api/books/:id', (req,res) => {
     const book = books.find(book => book.id === parseInt(req.params.id));
     if (!book) return res.status(404).send("Book not found ☹️");
     res.send(book)
+});*/
+
+app.get("/api/books/:id", async (req, res) => {
+  const book = await getBook(req.params.id);
+  if (!book) return res.status(404).send("Book not found ☹️");
+  res.send(book);
 });
 
 // POST
@@ -108,7 +121,7 @@ app.post('/api/books', (req, res) => {
         id: books.length + 1,
         author: req.body.author,
         title: req.body.title,
-    }
+    };
     books.push(naujaKnyga);
     res.send(books);
 });
@@ -134,5 +147,16 @@ app.put('/api/books/:id', (req, res) => {
     res.send(books);
 });
 
+// DELETE
+app.delete('/api/books/:id',(req, res) => {
+    const book = books.find((book) => book.id === parseInt(req.params.id));
+    if (!book) return res.status(404).send("Book not found ☹️");
+
+    const item = books.indexOf(book);
+    books.splice(item, 1);
+    res.send(books);
+});
+
 app.listen(3000, () => console.log("Lisstening on port 3000"));
+
 
