@@ -1,8 +1,8 @@
 import { getBooks, getBook } from "./app_db.js";
 import Joi from 'joi';
 import express from 'express';
-const app = express();
 
+const app = express();
 // Middleware to parse JSON bodies
 app.use(express.json()); 
 
@@ -159,4 +159,12 @@ app.delete('/api/books/:id',(req, res) => {
 
 app.listen(3000, () => console.log("Lisstening on port 3000"));
 
+function validate(r) {
+    const schema = Joi.object({
+        author: Joi.string().min(5).required(),
+        title: Joi.string().min(1).required(),
+    });
+    const validation = schema.validate(r);
+
+}
 
